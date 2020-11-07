@@ -1,14 +1,25 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import Head from './head'
+import Header from './common/header'
+import Card from './common/card'
 
 const Dummy = () => {
+
+  const goods = useSelector((s) => s.goods.goods)
+
   return (
     <div>
       <Head title="Hello" />
-      <div className="flex items-center justify-center h-screen">
-        <div className="bg-indigo-800 hover:text-red-500 text-white font-bold rounded-lg border shadow-lg p-10">
-          This is dummy component
-        </div>
+      <Header />
+      <div className="flex flex-wrap flex justify-around">
+        {goods.map((item) => {
+          return (
+            <div className=" h-auto m-3" key={item.id}>
+              <Card data={item} />
+            </div>
+          )
+        })}
       </div>
     </div>
   )
