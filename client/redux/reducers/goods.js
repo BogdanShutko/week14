@@ -1,6 +1,10 @@
+/* eslint-disable */
+
 import axios from 'axios'
 
 const CHANGE_CURRENSY = 'CHANGE_CURRENSY'
+const SORT_BY_PRICE = 'SORT_BY_PRICE'
+const SORT_BY_ALPHABET = 'SORT_BY_ALPHABET'
 
 const initialState = {
   goods: [
@@ -3520,6 +3524,20 @@ export default (state = initialState, action) => {
         rates: action.rates
       }
     }
+    case SORT_BY_PRICE: {
+      const newGoods = [...state.goods.sort((a, b) => b.price - a.price)]
+      return {
+        ...state,
+        goods: newGoods
+      }
+    }
+    case SORT_BY_ALPHABET: {
+      const newGoods = [...state.goods.sort((a, b) => a.title > b.title ? 1 : -1)]
+      return {
+        ...state,
+        goods: newGoods
+      }
+    }
     default:
       return state
   }
@@ -3536,5 +3554,41 @@ export function changeCurrensy(currensy) {
         rates: data.data.rates
       })
     )
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        action: `change currency from ${state.goods.currensy} to ${currensy}`,
+        time: +new Date()
+      }
+    })
+  }
+}
+
+export function sortByPrice() {
+  return (dispatch) => {
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        action: `sort by price`,
+        time: +new Date()
+      }
+    })
+    return dispatch({ type: SORT_BY_PRICE})
+  }
+}
+
+export function sortByAlphabet() {
+  return (dispatch) => {
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        action: `sort by alphabet`,
+        time: +new Date()
+      }
+    })
+    return dispatch({ type: SORT_BY_ALPHABET })
   }
 }

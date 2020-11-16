@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import { routerMiddleware } from 'connected-react-router'
+import { save, load } from 'redux-localstorage-simple'
 import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import SockJS from 'sockjs-client'
@@ -12,14 +13,27 @@ export const history = createHistory()
 
 const isBrowser = typeof window !== 'undefined'
 
-const initialState = {}
-const middleware = [thunk, routerMiddleware(history)]
+const middleware = [
+  thunk,
+  routerMiddleware(history),
+  save({
+    states: ['cart'],
+    namespace: 'cart'
+  })
+]
 
 const composeFunc = process.env.NODE_ENV === 'development' ? composeWithDevTools : compose
 
 const composedEnhancers = composeFunc(applyMiddleware(...middleware))
 
-const store = createStore(rootReducer(history), initialState, composedEnhancers)
+const store = createStore(
+  rootReducer(history),
+  load({
+    states: ['cart'],
+    namespace: 'cart'
+  }),
+  composedEnhancers
+)
 let socket
 
 if (typeof ENABLE_SOCKETS !== 'undefined' && ENABLE_SOCKETS) {

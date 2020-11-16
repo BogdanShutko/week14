@@ -1,5 +1,5 @@
-
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Head from './head'
 import Header from './common/header'
@@ -13,9 +13,21 @@ const Basket = () => {
   const currensy = useSelector((s) => s.goods.currensy)
   const rate = useSelector((s) => s.goods.rates[currensy])
   const goods = Object.keys(cart)
+
+  useEffect(() => {
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        action: `navigate to ${window.location.pathname}`,
+        time: +new Date()
+      }
+    })
+    return () => {}
+  }, [])
   return (
     <div>
-      <Head title="Hello" />
+      <Head title="Basket" />
       <Header />
 
       <table className="table-auto w-full">
@@ -31,9 +43,7 @@ const Basket = () => {
         </thead>
         <tbody>
           {goods.map((item, index) => {
-            if (cart[item].count === 0) {
-              return <div/>
-            }
+
             return (
               <tr key={item}>
                 <td className="border px-4 py-2">{index + 1}</td>

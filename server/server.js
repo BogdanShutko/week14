@@ -5,10 +5,12 @@ import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
-
 import cookieParser from 'cookie-parser'
+
 import config from './config'
 import Html from '../client/html'
+
+const { readFile, writeFile } = require('fs').promises
 
 const Root = () => ''
 
@@ -40,6 +42,27 @@ const middleware = [
 ]
 
 middleware.forEach((it) => server.use(it))
+
+const getLogs = () => {
+  return readFile(`${__dirname}/data/logs.json`, { encoding: 'utf8' })
+    .then((data) => JSON.parse(data))
+    .catch(async () => {
+      await writeFile(`${__dirname}/data/logs.json`, '[]', { encoding: 'utf8' })
+      return []
+    })
+}
+
+server.get('/api/v1/logs', async (req, res) => {
+  const logs = await getLogs()
+  res.json(logs)
+})
+
+server.post('/api/v1/logs', async (req, res) => {
+  const newData = req.body
+  const logs = await getLogs()
+  await writeFile(`${__dirname}/data/logs.json`, JSON.stringify([newData, ...logs]), { encoding: 'utf8' })
+  res.json({status: 'ok'})
+})
 
 server.use('/api/', (req, res) => {
   res.status(404)
@@ -88,4 +111,4 @@ if (config.isSocketsEnabled) {
   })
   echo.installHandlers(app, { prefix: '/ws' })
 }
-console.log(`Serving at http://localhost:${port}`)
+console.log(`${+ new Date()}Serving at http://localhost:${port}`)

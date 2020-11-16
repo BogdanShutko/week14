@@ -35,7 +35,7 @@ const Card = (props) => {
           <span className="font-serif font-bold">in cart:</span>
           <span className="font-serif float-right font-bold">
             {typeof cart[data.id] !== 'undefined'
-            ? cart[data.id].count 
+            ? cart[data.id].count
             : ''}
           </span>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 import Currensy from './currensy'
 import Sort from './sort'
 
@@ -13,6 +14,16 @@ const Header = () => {
       <div className=" flex justify-between">
         <Link
           to="/"
+          onClick={() =>
+            axios({
+              method: 'post',
+              url: '/api/v1/logs',
+              data: {
+                action: `navigate to '/' page`,
+                time: +new Date()
+              }
+            })
+          }
           className="no-underline text-teal-dark border-b-2 border-teal-dark uppercase tracking-wide font-bold text-xs py-5 mr-8"
           id="brand-name"
         >
@@ -20,6 +31,7 @@ const Header = () => {
         </Link>
         <Link
           to="/basket"
+  
           className="no-underline text-teal-dark border-b-2 border-teal-dark uppercase tracking-wide font-bold text-xs py-5 mr-8"
           id="order-count"
         >
